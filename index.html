@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Techno</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script src="./vue.min.js"></script>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div id="app">
+      <header class="header">
+        <a href="#"
+          ><img class="logo" src="./assets/techno.svg" alt="Techno"
+        /></a>
+        <div class="cart_menu" @click="carrinhoAtivo = true">
+          {{carrinhoTotal | numeroPreco}} | {{carrinho.length}} <img src="" />
+        </div>
+      </header>
+
+      <section class="produtos">
+        <div v-for="produto in produtos" class="produto">
+          <img :src="produto.img" class="produto_img" :alt="produto.nome" />
+          <div class="produto_info" @click="abrirModal(produto.id)">
+            <span class="produto_price">{{ produto.preco | numeroPreco }}</span>
+            <h2 class="produto_title">{{ produto.nome | toUpper }}</h2>
+          </div>
+        </div>
+      </section>
+
+      <section class="modal" v-if="produto" @click="fecharModal">
+        <div class="modal_container">
+          <div class="modal_img">
+            <img :src="produto.img" :alt="produto.nome" />
+          </div>
+          <div class="modal_data">
+            <span class="modal_price">{{produto.preco | numeroPreco}}</span>
+            <h2 class="modal_title">{{produto.nome | toUpper}}</h2>
+            <p class="produto_description">{{produto.descricao}}</p>
+            <p class="produto_inventory">
+              Estoque Disponível : {{produto.estoque}} Unidades
+            </p>
+            <button
+              v-if="produto.estoque > 0 "
+              class="modal_btn"
+              @click="adicionarItem"
+            >
+              Adicionar ao carrinho
+            </button>
+            <button v-else class="out_of_inventory" disabled>
+              Fora de Estoque
+            </button>
+          </div>
+          <div class="modal_reviews">
+            <h2 class="reviews_subtitle">Avaliações</h2>
+            <ul>
+              <li v-for="review in produto.reviews" class="review">
+                <p class="review_description">
+                  Descrição : {{review.descricao}}
+                </p>
+                <p class="review_name">
+                  {{review.nome}} | {{review.estrelas}} Estrelas
+                </p>
+                <span class="review_separator"></span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <div class="alert" :class="{alert_active: alertMessage}">
+        <p class="alert_message">{{mensagem_alerta}}</p>
+      </div>
+
+      <section
+        class="cart_modal"
+        :class="{ativo: carrinhoAtivo}"
+        @click="fecharModalCarrinho"
+      >
+        <div class="cart_modal_container">
+          <button class="cart_close" @click="carrinhoAtivo = false">X</button>
+          <h2 class="cart_modal_title">Carrinho</h2>
+          <div v-if="carrinho.length > 0">
+            <ul class="cart_list">
+              <li v-for="(item, index) in carrinho" class="cart_item">
+                <p class="cart_product_name">{{item.nome}}</p>
+                <p class="cart_price">{{item.preco | numeroPreco}}</p>
+                <button class="cart_remove" @click="removerItem(index)">
+                  Remover
+                </button>
+              </li>
+            </ul>
+            <p class="cart_total">Total : {{carrinhoTotal | numeroPreco}}</p>
+            <button class="carrinho_buy">Finalizar Compra</button>
+          </div>
+          <p v-else>O carrinho está vazio</p>
+        </div>
+      </section>
+    </div>
+    <script src="./app.js"></script>
+  </body>
+</html>
